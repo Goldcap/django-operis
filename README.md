@@ -54,7 +54,10 @@ ember server
 
 Locally we'll proxy everything via nginx, you'll see a custom config in the "doc" directory. Then you can view the homepage here:
 
-http://localhost:4200
+http://localhost
 
+Or directly via Ember Server
+
+http://localhost:4200
 
 Feel free to reach out to me with any questions or issues you might have, as the instructions above may or may not cover everything. Most of all, have fun!
