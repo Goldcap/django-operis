@@ -1,0 +1,22 @@
+<div class="messages">
+<ul id="holder" {{bind-attr class="view.opened"}}>
+    {{#each controller.messages}}
+        <li><a class="item alert" {{action "removeMessage" this target="view"}}><i class="fa fa-trash-o"></i></a> {{this.message}}</li>
+    {{/each}}
+</ul>
+</div>
+<div class="icon-bar five-up">
+  <a {{bind-attr class="view.connected:success"}}>
+    <i class="fa fa-trash-o"></i> {{ view.isconnected }}
+  </a>
+  <a class="item" {{action "clearMessages"}}>
+    <i class="fa fa-trash-o"></i> Clear
+  </a>
+  <a class="item" {{action "toggleOpened"}}>
+    {{#if view.opened}}
+        <i class="fa fa-minus-square-o"></i> Close
+    {{else}}
+        <i class="fa fa-plus-square-o"></i> Open
+    {{/if}}
+  </a>  
+</div>

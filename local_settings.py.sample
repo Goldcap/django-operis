@@ -1,0 +1,5 @@
+ENVIRONMENT = "development"
+EMBER_MODELS = ["someapp.models","someotherapp.models",]
+EMBER_APP_NAME = "some-ember-cli-app"
+EMBER_ENV = '{"environment":"development","baseURL":"/ember","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true}}'
+

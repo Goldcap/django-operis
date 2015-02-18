@@ -1,0 +1,5 @@
+{{#if view.isEditing}}
+    {{view view.picker value=view.formattedValue}}
+{{else}}
+    {{format-date model.uploaded "M/D/YYYY HH:mm"}}
+{{/if}}

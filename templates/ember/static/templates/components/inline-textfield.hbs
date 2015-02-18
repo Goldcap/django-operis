@@ -1,0 +1,5 @@
+{{#if view.isEditing}}
+  {{view view.textField class="inline-editor-input" value=view.value action="save" styleBinding="view.style" }}
+{{else}}
+ {{yield}}
+{{/if}}
