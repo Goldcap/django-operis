@@ -1,7 +1,7 @@
 # Django Operis
 Autogeneration of Ember Models from Django Models
 
-# Ember Install
+## Ember Install
 
 So just a brief rundown of how to get started with ember-cli. A lot of it will involve installing Ember CLI on your local machine.
 
@@ -23,16 +23,21 @@ bower install
 exit
 ```
 
-This has yet to be added to PIP, so to install, clone from the git repository, if you haven't already.
+## Django Install
+
+This has yet to be added to PIP, so to install, clone from the git repository, if you haven't already. Make sure the "ember" directory has been copied into your templates directory.
 
 You'll need to add a few things to your Django Settings:
 
 ```python
 ENVIRONMENT = "development"
-EMBER_MODELS = ["assets.models","products.models","paomusers.models",]
-EMBER_APP_NAME = "paom-app"
-EMBER_ENV = '{"environment":"development","baseURL":"/ember","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true}}'
+EMBER_MODELS = ["some-app.models","some-other-app.models","some-module.models",]
+EMBER_APP_NAME = "some-ember-app"
+EMBER_ENV = '{"environment":"development","baseURL":"/","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true}}'
 ```
+
+## Generating Models
+
 Once this is done, you should be able to generate the Ember models from Django models. You should likewise make sure you've collected the static components from Operis.
 
 ```python
