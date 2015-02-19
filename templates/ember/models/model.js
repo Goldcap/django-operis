@@ -1,7 +1,8 @@
-import Ember from 'ember';
+import Ember from 'ember';  
+import EmberValidations from 'ember-validations';
 import DS from "ember-data";
 
-var Operis{{ model.singular }} = DS.Model.extend(Ember.Validations.Mixin,{
+var Operis{{ model.singular }} = DS.Model.extend(EmberValidations.Mixin,{
   {%- for field in model.model -%}
   {%- if field.type == "BooleanField" %}
   {{field.name_underscore}}: DS.attr('boolean'){% if not loop.last %},{% endif %}

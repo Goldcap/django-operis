@@ -1,6 +1,6 @@
 import Ember from 'ember';
 {% if model.has_parent -%}
-import PaginatableChild from 'ember-app/mixins/paginatable-child';
+import PaginatableChild from '{{ember_app_name}}/mixins/paginatable-child';
 {%- else %}
 import PaginatableArray from '{{ember_app_name}}/mixins/paginatable-array';
 {% endif %}
