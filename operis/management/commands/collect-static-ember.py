@@ -29,7 +29,7 @@ class Command(BaseCommand):
         
         self.logger = log( self )
         
-        source = "%s/../templates/ember/static/*" % (settings.PROJECT_DIR)
+        source = "%s/../operis/templates/ember/static/*" % (settings.PROJECT_DIR)
         destination = "%s/../%s/app" % (settings.PROJECT_DIR,settings.EMBER_APP_NAME)
         command = "rsync -av %s %s" % (source,destination)
         
