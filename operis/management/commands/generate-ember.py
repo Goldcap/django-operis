@@ -45,6 +45,9 @@ class Command(BaseCommand):
                     model = []
                     if isinstance(obj, ModelBase):
                         self.logger.log("Object Name is: %s",[obj.__name__],"notice")
+                        if obj.__name__ in settings.EMBER_MODEL_EXCLUSIONS:
+                            continue
+                        
                         has_parent = False
                         field_history = []
                         
@@ -69,10 +72,12 @@ class Command(BaseCommand):
                                 field['name_underscore'] = underscore(f.name) 
                                 field['name_friendly'] = convert_friendly(f.name)
                                 field['type'] = f.get_internal_type()
+                                field['class'] = type(f).__name__
                                 
                                 if field['type'] == "ForeignKey" or field['type'] == "ManyToManyField":
                                     has_parent = True
                                     field['parent'] = underscore(f.rel.to.__name__)
+                                    field['parent_class'] = f.rel.to.__name__
                                     
                                 #self.logger.log("Field %s",[field['type']],"info")
                                 field_history.append(convert(f.name))
@@ -139,7 +144,8 @@ class Command(BaseCommand):
         #sys.exit(0)
                          
         global_exts = getattr(settings, 'JINJA_EXTS', ())
-        env = Environment(extensions=global_exts,loader=FileSystemLoader('templates'))
+        #env = Environment(extensions=global_exts,loader=FileSystemLoader('templates'))
+        env = Environment(extensions=global_exts,loader=PackageLoader('operis','templates'))
         basedir = settings.PROJECT_DIR + "/../" + settings.EMBER_APP_NAME
         
         #Create Operis Subdirectories        
@@ -153,6 +159,9 @@ class Command(BaseCommand):
             os.makedirs(basedir+ "/app/templates/operis")
                         
         self.logger.log("Directory is %s",[basedir],"notice")
+        source = "%s/../../templates/" % (os.path.dirname(__file__))
+        self.logger.log("Source is %s",[source],"notice")
+        #return
         
         for k,v in model_instances.iteritems():
             

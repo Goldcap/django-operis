@@ -1,6 +1,6 @@
 import datetime                         
 import sys
-import os.path
+from os.path import dirname
 import pprint
 import subprocess
 from inspect import getmembers, isclass
@@ -28,8 +28,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         self.logger = log( self )
-        
-        source = "%s/../operis/templates/ember/static/*" % (settings.PROJECT_DIR)
+              
+        source = "%s/../../templates/ember/static/*" % (dirname(__file__))
         destination = "%s/../%s/app" % (settings.PROJECT_DIR,settings.EMBER_APP_NAME)
         command = "rsync -av %s %s" % (source,destination)
         

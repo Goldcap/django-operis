@@ -10,9 +10,9 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.5',
+    version='1.4',
 
-    description='Ember JS Code Generators for Django Rest Framework',
+    description='Autogeneration of Ember Models from Django Models',
     #long_description=long_description,
 
     # The project's main homepage.
@@ -34,8 +34,11 @@ setup(
         'Development Status :: 3 - Alpha',
 
         # Indicate who your project is intended for
+        'Framework :: Django',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: WWW/HTTP',
+        'Programming Language :: JavaScript',
+        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
@@ -62,7 +65,7 @@ setup(
     # project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['django','djangorestframework'],
+    install_requires=['Django','djangorestframework','django-jinja', 'django-autofixture', ],
 
     # List additional groups of dependencies here (e.g. development dependencies).
     # You can install these using the following syntax, for example:
@@ -72,6 +75,7 @@ setup(
         'test': ['coverage'],
     },
 
+    include_package_data=True,
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
