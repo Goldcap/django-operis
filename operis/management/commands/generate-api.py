@@ -80,6 +80,7 @@ class Command(BaseCommand):
                                     has_parent = True
                                     field['parent'] = underscore(f.rel.to.__name__)
                                     field['parent_class'] = f.rel.to.__name__
+                                    field['parent_class_app'] = str(f.rel.to._meta.app_label)
                                     
                                 field_history.append(convert(f.name))
                                 fields_extended.append(field)
