@@ -1,39 +1,41 @@
 <table>
 <thead>
- <tr>
-  {%- for field in model.index_converted -%}
-  <td>
-        {{field}}
-  </td>
-  {%- endfor %}
-  <td>
-  &nbsp;
-  </td>
-</tr>
+    <tr>
+        {%- for field in model.index_converted -%}
+        <td>
+            {{field}}
+        </td>
+        {%- endfor %}
+        <td>
+        &nbsp;
+        </td>
+    </tr>
 </thead>
 <tbody>
 {% raw %}{{{% endraw %}#each {{ model.singular_converted }} in controller.paginatedContent{% raw %}}}{% endraw %}
- <tr>
-  {%- for field in model.model -%}
-  {% if field.type != 'OneToMany' %}
-  <td>
-        {% raw %}{{{% endraw %}{{ model.singular_converted}}.{{field.name}}{% raw %}}}{% endraw %}
-  </td>
-  {% endif %}
-  {% if field.type == 'OneToMany' %}
-  <td>
-      {% raw %}{{{% endraw %}#link-to "{{ field.plural_name }}.index" {% raw %}}}{% endraw %}
-      <button class="tiny"><i class="fa fa-pencil-square-o"></i> {{ field.name_converted }}</button>
-      {% raw %}{{{% endraw %}/link-to{% raw %}}}{% endraw %}
-  </td>
-  {% endif %}
-  {%- endfor %}
-  <td>
-  {% raw %}{{{% endraw %}#link-to "{{ model.singular_converted }}" {{ model.singular_converted }}{% raw %}}}{% endraw %}
-  <button class="tiny"><i class="fa fa-pencil-square-o"></i> Edit</button>
-  {% raw %}{{{% endraw %}/link-to{% raw %}}}{% endraw %}
-  </td> 
-</tr>
+    <tr>
+        {%- for field in model.model -%}
+        <td>
+            {% if field.class != 'ForeignKey' %}
+                {% if field.class == 'DateTimeField' %}
+                    {% raw %}{{{% endraw %}from-now {{ model.singular_converted}}.{{field.name}}{% raw %}}}{% endraw %}
+                {% else %}
+                    {% raw %}{{{% endraw %}{{ model.singular_converted}}.{{field.name}}{% raw %}}}{% endraw %}
+                {% endif %}
+            {% endif %}
+            {% if field.class == 'ForeignKey' %}
+              {% raw %}{{{% endraw %}#link-to "{{ field.parent_class_plural }}.edit" {{ model.singular_converted}}.{{ field.name }}{% raw %}}}{% endraw %}
+              <button class="tiny"><i class="fa fa-pencil-square-o"></i> {{ field.name_converted }}</button>
+              {% raw %}{{{% endraw %}/link-to{% raw %}}}{% endraw %}
+            {% endif %}
+        </td>
+        {%- endfor %}
+        <td>
+        {% raw %}{{{% endraw %}#link-to "{{ model.plural_converted }}.edit" {{ model.singular_converted }}{% raw %}}}{% endraw %}
+        <button class="tiny"><i class="fa fa-pencil-square-o"></i> Edit</button>
+        {% raw %}{{{% endraw %}/link-to{% raw %}}}{% endraw %}
+        </td> 
+    </tr>
 {% raw %}{{{% endraw %}/each{% raw %}}}{% endraw %}
 </tbody>
 </table>

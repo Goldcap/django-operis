@@ -12,12 +12,12 @@ from {{app}}.django_operis.views import *
 # Routers provide an easy way of automatically determining the URL conf
 router = routers.DefaultRouter(trailing_slash=False)
 {% for model in models -%}
-router.register(r'api/v1/{{model.plural_converted}}', {{model.singular}}ViewSet)
+router.register(r'api/v1/{{model.emberCase}}', {{model.singular}}ViewSet)
 {% endfor %}
 
 urlpatterns = patterns('',
      {% for model in models -%}
-     url(r'api/v1/{{model.plural_converted}}/(?P<pk>\d+)($|/$)',{{model.singular}}View.as_view()),
+     url(r'api/v1/{{model.emberCase}}/(?P<pk>\d+)($|/$)',{{model.singular}}View.as_view()),
      {% endfor %}
      url(r'^', include(router.urls)),
 ) 

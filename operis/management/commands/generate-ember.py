@@ -14,18 +14,23 @@ from django.db.models.base import ModelBase
 from jinja2 import FileSystemLoader, Environment, PackageLoader, ChoiceLoader
 
 from operis.log import log
-from operis.utils import clean, convert, convert_friendly, underscore
+from operis.utils import clean, convert, convert_friendly, underscore, firstLower
 
 class Command(BaseCommand):
     help = 'Creates Generic Ember Models' 
     logger = None
     
     option_list = BaseCommand.option_list + (
+        make_option('--init',
+            action='store_true',
+            dest='init',
+            default=False,
+            help='Create Initial App Instances'),
         make_option('--regenerate',
             action='store_true',
             dest='regenerate',
             default=False,
-            help='Wipe Prior instances'),
+            help='Wipe Prior Instances'),
         )
 
     def handle(self, *args, **options):
@@ -35,6 +40,10 @@ class Command(BaseCommand):
         wipe = False
         if options['regenerate']:
             wipe = True
+        
+        init = False
+        if options['init']:
+            init = True
         
         modules = map(__import__, settings.EMBER_MODELS)
         
@@ -50,39 +59,68 @@ class Command(BaseCommand):
                         
                         has_parent = False
                         field_history = []
+                        field_list = ['id']
+                        index_list = ['id']
+                        index_converted = []
                         
-                        for aname in obj._meta.get_all_field_names():
+                        if hasattr(obj ,"Ember"):
+                            if hasattr(obj.Ember,'index_list'):
+                                thelist = obj.Ember.index_list
+                            else:
+                                thelist = obj.Ember.fields
+                            index_list = []
+                            for f in thelist:
+                                field_list.append(f)
+                                index_list.append(convert(f))
+                                index_converted.append(convert_friendly(f))
+                                # resolve picklists/choices, with get_xyz_display() function
+                        
+                        #for aname in obj._meta.get_all_field_names():
+                        for aname in field_list:
                             f, modelItem, direct, m2m = obj._meta.get_field_by_name(aname)
-                            self.logger.log("Field %s",[f.name],"info")
+                            #self.logger.log("Field %s",[f.name],"info")
                             try:
-                                self.logger.log("Field Type is: %s",[f.get_internal_type()],"debug")
+                                assert(f.get_internal_type())
+                                #self.logger.log("Field Type is: %s",[f.get_internal_type()],"debug")
                             except:
                                 #for a in dir(f):
                                 #    print "%s = %s" % (a,getattr(f,a))
                                 continue
                                 #sys.exit(0)
                         
-                            if hasattr(obj ,"Ember") and hasattr(obj.Ember,'fields'):
-                                if f.name not in obj.Ember.fields:
-                                    continue
+                        
+                            if f.name not in index_list or convert(f.name) in field_history:
+                                continue
                                     
-                            if convert(f.name) not in field_history:
-                                field = {}
-                                field['name'] = convert(f.name) 
-                                field['name_underscore'] = underscore(f.name) 
-                                field['name_friendly'] = convert_friendly(f.name)
-                                field['type'] = f.get_internal_type()
-                                field['class'] = type(f).__name__
+                            self.logger.log("Field Match: %s",[f.name],"debug")
+                            field = {}
+                            field['name'] = convert(f.name) 
+                            field['name_underscore'] = underscore(f.name) 
+                            field['name_friendly'] = convert_friendly(f.name)
+                            field['type'] = f.get_internal_type()
+                            field['class'] = type(f).__name__
+                            
+                            if field['class'] == "ForeignKey" or field['type'] == "ManyToManyField":
+                                #has_parent = True
+                                field['parent'] = underscore(f.rel.to.__name__)
+                                field['parent_class'] = f.rel.to.__name__
+                                field['parent_class_app'] = str(f.rel.to._meta.app_label)
+                                if hasattr(obj._meta ,"verbose_name"):
+                                    singular = unicode(f.rel.to._meta.verbose_name)
+                                else:
+                                    singular = f.rel.to._meta.__name__.title()
+                                field['singular_converted'] = convert(singular)
                                 
-                                if field['type'] == "ForeignKey" or field['type'] == "ManyToManyField":
-                                    has_parent = True
-                                    field['parent'] = underscore(f.rel.to.__name__)
-                                    field['parent_class'] = f.rel.to.__name__
-                                    
-                                #self.logger.log("Field %s",[field['type']],"info")
-                                field_history.append(convert(f.name))
-                                model.append(field)
-                                # resolve picklists/choices, with get_xyz_display() function
+                                if hasattr(f.rel.to._meta ,"verbose_name_plural"):
+                                    plural = str(f.rel.to._meta.verbose_name_plural)
+                                else:
+                                    plural = f.rel.to.__name__
+                                field['parent_class_plural'] = convert(plural)
+                                
+                            #self.logger.log("Field %s",[field['type']],"info")
+                            field_history.append(convert(f.name))
+                            model.append(field)
+                            # resolve picklists/choices, with get_xyz_display() function
                         
                         """
                         #Generate Implied One-To-Many Relationships
@@ -104,25 +142,14 @@ class Command(BaseCommand):
                             model.append(field)
                         """
                             
-                        index_list = ['id']
-                        index_converted = []
                         plural = None
                         plural_converted = None
                         
-                        #Add to our Plural-Item Controllers
-                        if hasattr(obj ,"Ember"):
-                            if hasattr(obj.Ember,'index_list'):
-                                index_list = []
-                                for f in obj.Ember.index_list:
-                                    index_list.append(convert(f))
-                                    index_converted.append(convert_friendly(f))
-                                    # resolve picklists/choices, with get_xyz_display() function
-                               
                         if hasattr(obj._meta ,"verbose_name_plural"):
                             plural = unicode(obj._meta.verbose_name_plural)
                         else:
                             plural = plural.title()
-                            
+                          
                         item = {    "model": model, 
                                     "singular": unicode(obj.__name__).title(), 
                                     "singular_converted": convert(unicode(obj.__name__)),
@@ -162,6 +189,16 @@ class Command(BaseCommand):
         source = "%s/../../templates/" % (os.path.dirname(__file__))
         self.logger.log("Source is %s",[source],"notice")
         #return
+        
+        if init:
+            self.logger.log("Creating Base Router",[],"success")
+            filename = basedir + "/app/router.js"
+            template = env.get_template('ember/router.js')
+            args = {"models":model_instances,"ember_app_name":settings.EMBER_APP_NAME}
+            output = template.render(args)
+            file = open(filename, "w")
+            file.write(output)
+            file.close()
         
         for k,v in model_instances.iteritems():
             

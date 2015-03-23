@@ -1,5 +1,8 @@
 import re
 
+def firstLower(name):
+    return name[:1].lower() + name[1:] if name else ''
+    
 def clean(name):
     return re.sub('\s', '', name) 
 

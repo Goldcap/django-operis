@@ -14,7 +14,7 @@ from django.db.models.base import ModelBase
 from jinja2 import FileSystemLoader, Environment, PackageLoader, ChoiceLoader
 
 from operis.log import log
-from operis.utils import clean, convert, convert_friendly, underscore
+from operis.utils import clean, convert, convert_friendly, underscore, firstLower
 
 class Command(BaseCommand):
     help = 'Creates Generic API Scaffolding' 
@@ -105,7 +105,7 @@ class Command(BaseCommand):
                         fixture_seed = 1
                         
                         if hasattr(obj._meta ,"verbose_name"):
-                            singular = unicode(obj._meta.verbose_name)
+                            singular = str(obj._meta.verbose_name)
                         else:
                             singular = obj.__name__.title()
                         
@@ -113,7 +113,7 @@ class Command(BaseCommand):
                             continue
                             
                         if hasattr(obj._meta ,"verbose_name_plural"):
-                            plural = unicode(obj._meta.verbose_name_plural)
+                            plural = str(obj._meta.verbose_name_plural)
                         else:
                             plural = obj.__name__
                         
@@ -149,6 +149,7 @@ class Command(BaseCommand):
                                     "singular_converted": convert(singular),
                                     "plural": clean(plural),
                                     "plural_converted": convert(plural),
+                                    "emberCase": firstLower(plural),
                                     "index_converted": index_converted,
                                     "fields": fields_extended,
                                     "fields_converted": fields_converted,
